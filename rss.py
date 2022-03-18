@@ -1,3 +1,4 @@
+import json
 from re import search
 import feedparser
 import re
@@ -17,22 +18,27 @@ def main():
         posts.extend(feedparser.parse(url).entries)
 
     for post in posts:
-        print(post.title)
         if re.search("(H|h)ọc sinh giỏi quốc gia", post.title):
+            url = post.link
             found = True
             break
         found = False
-    result_file_write(found)
+    result_file_write(found, url)
 
 
-def result_file_write(found):
+def result_file_write(found, url):
     if found == True:
-        answer = "Results are in."
+        data = {
+            "result": 1,
+            "url": url,
+        }
     else:
-        answer = "Not yet."
+        data = {
+            "result": 0,
+        }
 
-    with open("result.txt", "w") as result_file:
-        result_file.write(answer)
+    with open("result.json", "w") as result_file:
+        json.dump(data, result_file)
 
 
 if __name__ == "__main__":
