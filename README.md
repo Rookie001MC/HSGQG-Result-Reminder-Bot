@@ -1,4 +1,4 @@
-<sub>Imagine being this retarded just to make an entire bot for updating the HSGQG result lol.</sub>
+<sub>Imagine being this retarded just to make an entire bot for updating the HSGQG result lol. ¯\_(ツ)_/¯</sub>
 
 # HSGQG Result Reminder Bot
 
