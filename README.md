@@ -14,3 +14,5 @@ Notifies user _(a.k.a only me)_ if the result of the HSGQG Contest is released.
 ## Disclaimer
 
 - My code is ugly, but because I code for fun, I ain't gonna care much.
+- This project isn't intended for public use, as it is more or less just a proof-of-concept than an actual work. 
+I may revisit this to implement more features, but as of right now, it only serves one single purpose.
