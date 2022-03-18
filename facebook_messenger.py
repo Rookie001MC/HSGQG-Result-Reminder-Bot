@@ -66,5 +66,12 @@ def call_SendAPI(sender_psid, response):
         print(f"Message failed to send. \nError: ${err}")
 
 
+def handle_postback(sender_psid, received_postback):
+    response = {
+        "text": "Sadly not implemented. I'll finish this whenever I'm not lazy."
+    }
+    call_SendAPI(sender_psid, response)
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=1337)
