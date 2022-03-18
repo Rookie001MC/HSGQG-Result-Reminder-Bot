@@ -1,5 +1,7 @@
 <sub>Imagine being this retarded just to make an entire bot for updating the HSGQG result lol.</sub>
 
+**This is the experimental branch, originally intended for any wizardry that I may think of.**
+
 # HSGQG Result Reminder Bot
 
 Notifies user _(a.k.a only me)_ if the result of the HSGQG Contest is released.

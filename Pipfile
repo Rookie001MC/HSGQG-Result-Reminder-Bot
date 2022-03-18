@@ -10,6 +10,7 @@ black = "*"
 flask = "*"
 requests = "*"
 python-dotenv = "*"
+schedule = "*"
 
 [dev-packages]
 black = "*"

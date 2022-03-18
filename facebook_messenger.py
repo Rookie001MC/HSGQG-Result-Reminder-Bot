@@ -44,10 +44,39 @@ def webhook_verify():
     return Response(response="Wrong verify token.", status=403)
 
 
+def setup_information():
+    request_body = {
+        "get_started": {"payload": "GET_STARTED_PAYLOAD"},
+        "greeting": [
+            {
+                "locale": "en_US",
+                "text": "Just a Messenger bot for experimenting with different things.",
+            },
+            {
+                "locale": "vi_VN",
+                "text": "Một con bot Messenger để làm tí thử nghiệm. (Toàn bộ tin nhắn bằng tiếng Anh)",
+            },
+        ],
+        "get_started": {"payload": "GET_STARTED_PAYLOAD"},
+    }
+    try:
+        r = requests.post(
+            "https://graph.facebook.com/me/messenger_profile?access_token="
+            + ACCESS_TOKEN,
+            json=request_body,
+        )
+        r.raise_for_status()
+    except requests.exceptions.HTTPError as err:
+        print(f"Message failed to send. \nError: ${err}")
+        return Response(response=err, status=r.status_code)
+
+
 def handle_message(sender_psid, received_message):
     if received_message["text"] == "/update":
-        response = fetch_if_result_posted()
+        response = fetch_manual()
         call_SendAPI(sender_psid, response)
+    if received_message["text"] == "/subscribe":
+        subscribe_to_result(sender_psid)
 
 
 def call_SendAPI(sender_psid, response):
@@ -69,13 +98,20 @@ def call_SendAPI(sender_psid, response):
 
 
 def handle_postback(sender_psid, received_postback):
-    response = {
-        "text": "Sadly not implemented. I'll finish this whenever I'm not lazy."
-    }
+    payload = received_postback["payload"]
+
+    if payload == "GET_STARTED_PAYLOAD":
+        response = {
+            "text": "Hi there!\n\nThis is just a messenger bot used for any experimentation that I may come up with.\n\nSo far it has only one use, to allow notification of the HSGQG result."
+        }
     call_SendAPI(sender_psid, response)
 
 
-def fetch_if_result_posted():
+def subscribe_to_result(sender_psid):
+    pass  # This is mainly used on repl.it, so I'll be using the replit package instead.
+
+
+def fetch_manual():
     rss.main()
     with open("result.json", "r") as result_file:
         result_info = json.load(result_file)
@@ -92,6 +128,19 @@ def fetch_if_result_posted():
             "text": f"Last updated:{updated_time}\n\n{message} \n\nSee the results here: {post_url}"
         }
         return response
+
+
+def fetch_auto():
+    rss.main()
+    with open("result.json", "r") as result_file:
+        result_info = json.load(result_file)
+    updated_time = result_info["updated_time"]
+    if result_info["result"] == 1:
+        post_url = result_info["url"]
+        message = {
+            "text": f"Last updated:{updated_time}\n\nResult is available.\n\nSee the results here: {post_url}"
+        }
+        call_SendAPI()
 
 
 if __name__ == "__main__":
