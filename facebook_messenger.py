@@ -1,6 +1,7 @@
 from flask import Flask, Response, request
 from dotenv import load_dotenv
 import requests, json, os
+import rss
 
 app = Flask(__name__)
 
@@ -44,8 +45,8 @@ def webhook_verify():
 
 
 def handle_message(sender_psid, received_message):
-    if received_message["text"]:
-        response = {"text": f"You sent the message: ${received_message['text']}."}
+    if received_message["text"] == "/update":
+        response = fetch_if_result_posted()
         call_SendAPI(sender_psid, response)
 
 
@@ -58,12 +59,13 @@ def call_SendAPI(sender_psid, response):
     }
     try:
         r = requests.post(
-            "https://graph.facebook.com/v2.6/me/messages/?access_token=" + ACCESS_TOKEN,
+            "https://graph.facebook.com/me/messages/?access_token=" + ACCESS_TOKEN,
             json=request_body,
         )
         r.raise_for_status()
     except requests.exceptions.HTTPError as err:
         print(f"Message failed to send. \nError: ${err}")
+        return Response(response=err, status=r.status_code)
 
 
 def handle_postback(sender_psid, received_postback):
@@ -71,6 +73,25 @@ def handle_postback(sender_psid, received_postback):
         "text": "Sadly not implemented. I'll finish this whenever I'm not lazy."
     }
     call_SendAPI(sender_psid, response)
+
+
+def fetch_if_result_posted():
+    rss.main()
+    with open("result.json", "r") as result_file:
+        result_info = json.load(result_file)
+    updated_time = result_info["updated_time"]
+    if result_info["result"] == 0:
+        message = {
+            "text": f"Last updated: {updated_time}.\n\nResult not yet available."
+        }
+        return message
+    else:
+        message = "Result is available."
+        post_url = result_info["url"]
+        response = {
+            "text": f"Last updated:{updated_time}\n\n{message} \n\nSee the results here: {post_url}"
+        }
+        return response
 
 
 if __name__ == "__main__":
