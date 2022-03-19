@@ -1,4 +1,4 @@
-from flask import Flask, Response, request
+from flask import Flask, Response, request, render_template
 from dotenv import load_dotenv
 import requests, json, os
 import rss
@@ -12,7 +12,12 @@ ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
 
 @app.route("/")
 def hello():
-    return "<h1>Hello world!</h1>"
+    return render_template("index.html")
+
+
+@app.route("/privacy")
+def hello():
+    return render_template("privacy.html")
 
 
 @app.route("/webhook", methods=["POST"])
