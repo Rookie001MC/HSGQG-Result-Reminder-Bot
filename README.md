@@ -1,4 +1,4 @@
-<sub>Imagine being this retarded just to make an entire bot for updating the HSGQG result lol.</sub>
+<sub>Imagine being this retarded just to make an entire bot for updating the HSGQG result lol. ¯\_(ツ)_/¯</sub>
 
 **This is the experimental branch, originally intended for any wizardry that I may think of.**
 
@@ -16,3 +16,5 @@ Notifies user _(a.k.a only me)_ if the result of the HSGQG Contest is released.
 ## Disclaimer
 
 - My code is ugly, but because I code for fun, I ain't gonna care much.
+- This project isn't intended for public use, as it is more or less just a proof-of-concept than an actual work. 
+I may revisit this to implement more features, but as of right now, it only serves one single purpose.

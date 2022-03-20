@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "repl_python3_beta_HSGQG-Result-Reminder-Bot"
+version = "0.1.0"
+description = ""
+authors = ["Rookie-Nguyen <<>>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+feedparser = "^6.0.8"
+Flask = "^2.0.3"
+python-dotenv = "^0.19.2"
+gunicorn = "^20.1.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
