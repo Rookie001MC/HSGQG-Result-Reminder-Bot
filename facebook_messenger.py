@@ -1,7 +1,8 @@
-from flask import Flask, Response, request
+from flask import Flask, Response, request, render_template
 from dotenv import load_dotenv
 import requests, json, os
 import rss
+from threading import Thread
 
 app = Flask(__name__)
 
@@ -12,8 +13,11 @@ ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
 
 @app.route("/")
 def hello():
-    return "<h1>Hello world!</h1>"
+    return render_template("index.html")
 
+@app.route("/privacy")
+def privacy():
+    return render_template("privacy.html")
 
 @app.route("/webhook", methods=["POST"])
 def webhook_trickery():
@@ -93,6 +97,12 @@ def fetch_if_result_posted():
         }
         return response
 
+def keep_alive() -> None:
+    """ Wraps the web server run() method in a Thread object and starts the web server. """
+    def run() -> None:
+        app.run(host = '0.0.0.0', port = 1337)
+    thread = Thread(target = run)
+    thread.start()
 
 if __name__ == "__main__":
-    app.run(debug=True, port=1337)
+    keep_alive()
