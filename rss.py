@@ -30,7 +30,7 @@ def main():
 
 
 def result_file_write(found, url):
-    updated_time = datetime.datetime.now().strftime("%A, %d/%m/%Y at %H:%M")
+    updated_time = datetime.datetime.now().strftime("%A, %d/%m/%Y at %H:%M ICT")
     if found == True:
         data = {
             "updated_time": updated_time,
