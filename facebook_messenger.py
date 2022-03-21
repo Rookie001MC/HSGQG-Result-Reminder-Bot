@@ -1,8 +1,12 @@
 from flask import Flask, Response, request, render_template
 from dotenv import load_dotenv
 import requests, json, os
-import rss
 from threading import Thread
+import time
+from schedule import every, repeat, run_pending
+
+import rss
+
 
 app = Flask(__name__)
 
@@ -15,9 +19,11 @@ ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
 def hello():
     return render_template("index.html")
 
+
 @app.route("/privacy")
 def privacy():
     return render_template("privacy.html")
+
 
 @app.route("/webhook", methods=["POST"])
 def webhook_trickery():
@@ -77,7 +83,7 @@ def setup_information():
 
 def handle_message(sender_psid, received_message):
     if received_message["text"] == "/update":
-        response = fetch_manual()
+        response = fetch_result(received_message["text"])
         call_SendAPI(sender_psid, response)
     if received_message["text"] == "/subscribe":
         subscribe_to_result(sender_psid)
@@ -115,42 +121,46 @@ def subscribe_to_result(sender_psid):
     pass  # This is mainly used on repl.it, so I'll be using the replit package instead.
 
 
-def fetch_manual():
+@repeat(every(6).hours)
+def fetch_result(received_message_bot):
     rss.main()
     with open("result.json", "r") as result_file:
         result_info = json.load(result_file)
     updated_time = result_info["updated_time"]
-    if result_info["result"] == 0:
-        message = {
-            "text": f"Last updated: {updated_time}.\n\nResult not yet available."
-        }
-        return message
-    else:
+    if result_info["result"] == 1:
         message = "Result is available."
         post_url = result_info["url"]
         response = {
             "text": f"Last updated:{updated_time}\n\n{message} \n\nSee the results here: {post_url}"
         }
         return response
+    else:
+        if received_message_bot and received_message_bot == "/update":
+            message = {
+                "text": f"Last updated: {updated_time}.\n\nResult not yet available."
+            }
+            return message
+        else:
+            pass
+
+
+def run_schedule():
+    while True:
+        run_pending()
+        time.sleep(1)
+
 
 def keep_alive() -> None:
-    """ Wraps the web server run() method in a Thread object and starts the web server. """
-    def run() -> None:
-        app.run(host = '0.0.0.0', port = 1337)
-    thread = Thread(target = run)
-    thread.start()
+    """Wraps the web server run() method in a Thread object and starts the web server."""
 
-def fetch_auto():
-    rss.main()
-    with open("result.json", "r") as result_file:
-        result_info = json.load(result_file)
-    updated_time = result_info["updated_time"]
-    if result_info["result"] == 1:
-        post_url = result_info["url"]
-        message = {
-            "text": f"Last updated:{updated_time}\n\nResult is available.\n\nSee the results here: {post_url}"
-        }
-        call_SendAPI()
+    def run() -> None:
+        app.run(host="0.0.0.0", port=1337)
+
+    main_thread = Thread(target=run)
+    schedule_thread = Thread(target=run_schedule)
+
+    main_thread.start()
+    schedule_thread.start()
 
 
 if __name__ == "__main__":
