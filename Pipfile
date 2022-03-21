@@ -11,6 +11,8 @@ flask = "*"
 requests = "*"
 python-dotenv = "*"
 schedule = "*"
+tzdata = "*"
+pytz = "*"
 
 [dev-packages]
 black = "*"
